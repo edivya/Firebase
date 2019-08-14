@@ -13,15 +13,42 @@ var config = {
 
 firebase.initializeApp(config);
 
-
 // Create a variable to reference the database.
 var database = firebase.database();
 
-// --------------------------------------------------------------
-// Link to Firebase Database for viewer tracking
+// -----------------------------
 
+// connectionsRef references a specific location in our database.
+// All of our connections will be stored in this directory.
+var connectionsRef = database.ref("/connections");
 
-// --------------------------------------------------------------
+// '.info/connected' is a special location provided by Firebase that is updated
+// every time the client's connection state changes.
+// '.info/connected' is a boolean value, true if the client is connected and false if they are not.
+var connectedRef = database.ref(".info/connected");
+
+// When the client's connection state changes...
+connectedRef.on("value", function(snap) {
+
+  // If they are connected..
+  if (snap.val()) {
+
+    // Add user to the connections list.
+    var con = connectionsRef.push(true);
+    // Remove user from the connection list when they disconnect.
+    con.onDisconnect().remove();
+  }
+});
+
+// When first loaded or when the connections list changes...
+connectionsRef.on("value", function(snap) {
+
+  // Display the viewer count in the html.
+  // The number of online users is the number of children in the connections list.
+  $("#connected-viewers").text(snap.numChildren());
+});
+
+// ------------------------------------
 // Initial Values
 var initialBid = 0;
 var initialBidder = "No one :-(";
@@ -29,14 +56,6 @@ var highPrice = initialBid;
 var highBidder = initialBidder;
 
 // --------------------------------------------------------------
-
-// Add ourselves to presence list when online.
-
-
-// Number of online users is the number of objects in the presence list.
-
-
-// ----------------------------------------------------------------
 // At the page load and subsequent value changes, get a snapshot of the local data.
 // This function allows you to update your page in real-time when the values within the firebase node bidderData changes
 database.ref("/bidderData").on("value", function(snapshot) {
@@ -70,14 +89,13 @@ database.ref("/bidderData").on("value", function(snapshot) {
     console.log(highPrice);
   }
 
-// If any errors are experienced, log them to console.
+  // If any errors are experienced, log them to console.
 }, function(errorObject) {
   console.log("The read failed: " + errorObject.code);
 });
 
 // --------------------------------------------------------------
-
-// Whenever a user clicks the submit-bid button
+// Whenever a user clicks the click button
 $("#submit-bid").on("click", function(event) {
   event.preventDefault();
 
@@ -85,8 +103,9 @@ $("#submit-bid").on("click", function(event) {
   var bidderName = $("#bidder-name").val().trim();
   var bidderPrice = parseInt($("#bidder-price").val().trim());
 
-  // Log to console the Bidder and Price (Even if not the highest)
-
+  // Log the Bidder and Price (Even if not the highest)
+  console.log(bidderName);
+  console.log(bidderPrice);
 
   if (bidderPrice > highPrice) {
 
@@ -111,9 +130,7 @@ $("#submit-bid").on("click", function(event) {
     // Change the HTML to reflect the new high price and bidder
     $("#highest-bidder").text(bidderName);
     $("#highest-price").text("$" + bidderPrice);
-
-  }
-  else {
+  } else {
 
     // Alert
     alert("Sorry that bid is too low. Try again.");
