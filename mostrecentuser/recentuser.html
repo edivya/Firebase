@@ -7,8 +7,7 @@
   <title>Sign-Up Today!</title>
 
   <!-- Bootstrap -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
-    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
 </head>
 
@@ -26,7 +25,7 @@
 
       <!-- Sign-Up Card-->
       <div class="col-lg-6">
-        <div class="card">
+        <div class="card card-default">
           <div class="card-header">
             New Member Sign-Up
           </div>
@@ -34,19 +33,19 @@
 
             <!-- Sign-up Form (note the various input "types")-->
             <form role="form">
-              <div class="form-group">
+              <div class="form-group row">
                 <label for="name-input">Name:</label>
                 <input class="form-control" id="name-input" type="text">
               </div>
-              <div class="form-group">
+              <div class="form-group row">
                 <label for="email-input">Email:</label>
                 <input class="form-control" id="email-input" type="email">
               </div>
-              <div class="form-group">
+              <div class="form-group row">
                 <label for="age-input">Age:</label>
                 <input class="form-control" id="age-input" type="number">
               </div>
-              <div class="form-group">
+              <div class="form-group row">
                 <label for="comment-input">How did you hear about us?</label>
                 <textarea class="form-control" id="comment-input" rows="5"></textarea>
               </div>
@@ -58,7 +57,7 @@
 
       <!-- Most Recent Member Card -->
       <div class="col-lg-6">
-        <div class="card">
+        <div class="card card-default">
           <div class="card-header">
             Most Recent Member
           </div>
@@ -79,34 +78,31 @@
   <script src="https://code.jquery.com/jquery.js"></script>
 
   <!-- LINKS FOR FIREBASE GO HERE -->
-  <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
-
+  <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
 
   <!-- Script -->
   <script>
-    //  START CODING BELOW!!
+    // START CODING BELOW!!
 
     // Initialize Firebase
     var config = {
-    apiKey: "AIzaSyBMl6WQZ0Jq_FbRQ91AdCcmYK6gzlpCb3M",
-    authDomain: "fir-intro-87df0.firebaseapp.com",
-    databaseURL: "https://fir-intro-87df0.firebaseio.com",
-    projectId: "fir-intro-87df0",
-    storageBucket: "",
-    messagingSenderId: "217212313089",
-    appId: "1:217212313089:web:401162bd7ec2a10a"
-  };
-    firebase.initializeApp(config);
+      apiKey: "AIzaSyA5eYKsB8T2q6rMGdKSvac6eQsWTzsZEjE",
+      authDomain: "fir-recent-user.firebaseapp.com",
+      databaseURL: "https://fir-recent-user.firebaseio.com",
+      storageBucket: "fir-recent-user.appspot.com"
+    };
 
+    firebase.initializeApp(config);
 
     // Create a variable to reference the database
     var database = firebase.database();
-    // Initial Variables (SET the first set IN FIREBASE FIRST)
-    // Note remember to create these same variables in Firebase!
+
+    // Initial Values
     var name = "";
-    var age = "";
     var email = "";
+    var age = 0;
+    var comment = "";
 
     // Capture Button Click
     $("#add-user").on("click", function(event) {
@@ -114,43 +110,41 @@
       event.preventDefault();
 
       // YOUR TASK!!!
-
       // Code in the logic for storing and retrieving the most recent user.
-
       // Don't forget to provide initial data to your Firebase database.
-// Get inputs
-name = $("#name-input").val().trim();
-      age = $("#age-input").val().trim();
+      name = $("#name-input").val().trim();
       email = $("#email-input").val().trim();
+      age = $("#age-input").val().trim();
+      comment = $("#comment-input").val().trim();
 
-      // Change what is saved in firebase
       database.ref().set({
         name: name,
-        age: age,
         email: email,
-        comment:comment,
+        age: age,
+        comment: comment
       });
-    
+
     });
 
-
     // Firebase watcher + initial loader HINT: .on("value")
-
     database.ref().on("value", function(snapshot) {
-         // Print the initial data to the console.
+
+      // Log everything that's coming out of snapshot
       console.log(snapshot.val());
+      console.log(snapshot.val().name);
+      console.log(snapshot.val().email);
+      console.log(snapshot.val().age);
+      console.log(snapshot.val().comment);
 
-// Log the value of the various properties
-console.log(snapshot.val().name);
-console.log(snapshot.val().age);
-console.log(snapshot.val().email);
+      // Change the HTML to reflect
+      $("#name-display").text(snapshot.val().name);
+      $("#email-display").text(snapshot.val().email);
+      $("#age-display").text(snapshot.val().age);
+      $("#comment-display").text(snapshot.val().comment);
 
-// Change the HTML
-$("#displayed-data").text(snapshot.val().name + " | " + snapshot.val().age + " | " + snapshot.val().email);
-
-    // Create Error Handling
-}, function(errorObject) {
-      console.log("The read failed: " + errorObject.code);
+      // Handle the errors
+    }, function(errorObject) {
+      console.log("Errors handled: " + errorObject.code);
     });
 
   </script>
