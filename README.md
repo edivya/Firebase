@@ -1,6 +1,8 @@
 ## Firebase
 There are two main types of storage we will use to save data:
 
+* Client Side Storage: uses cookies, sessionStorage, and localStorage to save and reuse user data across a user’s session.
+
 **Most Recent User**
 
 * Using the file above as a starting point, create an app that stores each new user in a Firebase database.
