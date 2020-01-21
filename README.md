@@ -1,4 +1,5 @@
 ## Firebase
+There are two main types of storage we will use to save data:
 
 **Most Recent User**
 
