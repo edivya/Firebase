@@ -2,6 +2,7 @@
 There are two main types of storage we will use to save data:
 
 * Client Side Storage: uses cookies, sessionStorage, and localStorage to save and reuse user data across a user’s session.
+* Server Side Storage: saves user info to a database that can be reused across multiple devices and sessions. We'll use Firebase to accomplish this.
 
 **Most Recent User**
 
